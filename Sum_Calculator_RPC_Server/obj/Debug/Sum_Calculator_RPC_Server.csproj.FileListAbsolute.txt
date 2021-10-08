@@ -1,0 +1,10 @@
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\bin\Debug\Sum_Calculator_RPC_Server.exe.config
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\bin\Debug\Sum_Calculator_RPC_Server.exe
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\bin\Debug\Sum_Calculator_RPC_Server.pdb
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.csproj.AssemblyReference.cache
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.Form1.resources
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.Properties.Resources.resources
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.csproj.GenerateResource.cache
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.csproj.CoreCompileInputs.cache
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.exe
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.pdb
