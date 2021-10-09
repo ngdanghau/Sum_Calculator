@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,12 +26,11 @@ namespace Sum_Calculator_RPC_Client
         public Form1()
         {
             InitializeComponent();
-            txtPort.Text = "8080";
             txtIP.Text = "127.0.0.1";
-
+            txtPort.Text = "8080";
         }
 
-
+        // set trạng thái Enable của các nút trên ứng dụng
         private void SetStateButton(bool status)
         {
             connectBtn.Invoke((MethodInvoker)delegate
@@ -72,6 +72,7 @@ namespace Sum_Calculator_RPC_Client
             {
                 try
                 {
+                    // lấy độ dài packet nhận được từ server
                     bytes = client.stream.EndRead(result);
                 }
                 catch (Exception ex)
@@ -79,16 +80,15 @@ namespace Sum_Calculator_RPC_Client
                     WriteLog(Utils.ErrorMsg(ex.Message));
                 }
             }
+
+            // kiểm tra độ dài packet
             if (bytes > 0)
             {
+                // chuyển buffer thành string và lưu vào client.data
                 client.data.AppendFormat("{0}", Encoding.UTF8.GetString(client.buffer, 0, bytes));
                 try
                 {
-                    if (client.stream.DataAvailable)
-                    {
-                        client.stream.BeginRead(client.buffer, 0, client.buffer.Length, new AsyncCallback(Read), null);
-                    }
-                    else
+                    if (!client.stream.DataAvailable)
                     {
                         WriteLog(client.data.ToString());
                         client.data.Clear();
@@ -113,6 +113,7 @@ namespace Sum_Calculator_RPC_Client
         {
             try
             {
+                // tạo đối tượng Client
                 client = new Client();
                 client.client = new TcpClient();
                 client.client.Connect(ip, port);
@@ -121,11 +122,16 @@ namespace Sum_Calculator_RPC_Client
                 client.buffer = new byte[client.client.ReceiveBufferSize];
                 client.data = new StringBuilder();
                 client.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
+
+                // set trạng thái connect
                 Connected(true);
+
+                // while khi còn kết nối
                 while (client.client.Connected)
                 {
                     try
                     {
+                        // nhận packet từ server gửi đến, khi nhận được packet nào đó thì một callback sẽ được gọi tên là Read
                         client.stream.BeginRead(client.buffer, 0, client.buffer.Length, new AsyncCallback(Read), null);
                         client.handle.WaitOne();
                     }
@@ -134,7 +140,11 @@ namespace Sum_Calculator_RPC_Client
                         WriteLog(Utils.ErrorMsg(ex.Message));
                     }
                 }
+
+                // close TcpClient trong client
                 client.client.Close();
+
+                //set trạng thái connect
                 Connected(false);
             }
             catch (Exception ex)
@@ -187,6 +197,7 @@ namespace Sum_Calculator_RPC_Client
 
                 if (!error)
                 {
+                    // chạy luồng Connection
                     thread = new Thread(() => Connection(ip, port))
                     {
                         IsBackground = true
@@ -212,6 +223,8 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+
+        // Hàm để nhận gói tin từ server
         private void Write(IAsyncResult result)
         {
             if (client.client.Connected)
@@ -227,6 +240,8 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+        // Hàm để send gói tin tới sever
+
         private void Send(string msg)
         {
             if (send == null || send.IsCompleted)
@@ -239,17 +254,46 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+
+        // kiểm tra đầu vào input trước khi gửi
+        private int Validation(String input)
+        {
+            int i;
+            if (int.TryParse(input, out i) == false)
+            {
+                WriteLog(Utils.SystemMsg("Please only enter a number"));
+                return -1;
+            }
+            else if (i < 1 || i > 10)
+            {
+                WriteLog(Utils.SystemMsg("Please enter a number between 1 and 10"));
+                return -1;
+            }
+            else
+                return i;
+        }
+
+
+        // sự kiện click send 
         private void sendBtn_Click(object sender, EventArgs e)
         {
             if (sendTextBox.Text.Length > 0)
             {
-                string msg = sendTextBox.Text;
-                sendTextBox.Clear();
-                WriteLog(string.Format("{0} (You): {1}", client.username, msg));
-                if (connected)
+                if (Validation(sendTextBox.Text) != -1)
                 {
-                    Send(msg);
+                    string msg = sendTextBox.Text;
+                    sendTextBox.Clear();
+                    WriteLog(string.Format("{0} (You): {1}", client.username, msg));
+                    if (connected)
+                    {
+                        Send(msg);
+                    }
                 }
+            }
+            else
+            {
+                WriteLog(Utils.SystemMsg("A number is needed"));
+                return;
             }
         }
 
@@ -261,13 +305,15 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+
+        // sự kiện clear log
         private void clearBtn_Click(object sender, EventArgs e)
         {
             WriteLog();
         }
 
         // ghi log vào textbox
-        private void WriteLog(string msg = "") // xóa log Text nếu cho chuổi là rỗng
+        private void WriteLog(string msg = "") // xóa log Text nếu msg rỗng hoặc ko có
         {
             if (!exit)
             {
@@ -285,6 +331,8 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+
+        // sự kiện khi thoát Form 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             exit = true;

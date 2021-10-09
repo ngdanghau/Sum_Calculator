@@ -36,11 +36,11 @@ namespace Sum_Calculator_RPC_Client
             this.label2 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtIP = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.clearBtn = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.TextBox();
             this.sendTextBox = new System.Windows.Forms.TextBox();
+            this.txtIP = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -78,12 +78,12 @@ namespace Sum_Calculator_RPC_Client
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtIP);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.disconnectBtn);
             this.groupBox1.Controls.Add(this.txtPort);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.connectBtn);
-            this.groupBox1.Controls.Add(this.txtIP);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(485, 100);
@@ -115,13 +115,6 @@ namespace Sum_Calculator_RPC_Client
             this.label1.Size = new System.Drawing.Size(56, 13);
             this.label1.TabIndex = 6;
             this.label1.Text = "Địa chỉ IP:";
-            // 
-            // txtIP
-            // 
-            this.txtIP.Location = new System.Drawing.Point(68, 13);
-            this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(161, 20);
-            this.txtIP.TabIndex = 5;
             // 
             // groupBox2
             // 
@@ -161,6 +154,13 @@ namespace Sum_Calculator_RPC_Client
             this.sendTextBox.Size = new System.Drawing.Size(161, 20);
             this.sendTextBox.TabIndex = 9;
             // 
+            // txtIP
+            // 
+            this.txtIP.Location = new System.Drawing.Point(69, 12);
+            this.txtIP.Name = "txtIP";
+            this.txtIP.Size = new System.Drawing.Size(160, 20);
+            this.txtIP.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -189,11 +189,11 @@ namespace Sum_Calculator_RPC_Client
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtIP;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.TextBox sendTextBox;
         private System.Windows.Forms.Button clearBtn;
+        private System.Windows.Forms.TextBox txtIP;
     }
 }
 

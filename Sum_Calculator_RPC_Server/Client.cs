@@ -7,13 +7,13 @@ namespace Sum_Calculator_RPC_Server
 {
     public class Client 
     {
+        public long id;
         public string username;
         public TcpClient client;
         public NetworkStream stream;
         public byte[] buffer;
         public StringBuilder data;
         public EventWaitHandle handle;
-
     }
 
 }

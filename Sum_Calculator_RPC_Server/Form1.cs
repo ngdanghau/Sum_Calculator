@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -13,10 +15,11 @@ namespace Sum_Calculator_RPC_Server
     {
         private bool active = false;
         private Thread listener = null;
-        private Client client = null;
         private Task send = null;
         private Thread disconnect = null;
         private bool exit = false;
+        private long id = 0;
+        private ConcurrentDictionary<long, Client> clients = new ConcurrentDictionary<long, Client>();
 
         public Form1()
         {
@@ -131,6 +134,7 @@ namespace Sum_Calculator_RPC_Server
 
         private void Connection(Client obj)
         {
+            clients.TryAdd(obj.id, obj);
             string msg = string.Format("{0} has connected", obj.username);
             WriteLog(Utils.SystemMsg(msg));
             SetStateDisconnectButton(true);
@@ -148,7 +152,8 @@ namespace Sum_Calculator_RPC_Server
                 }
             }
             obj.client.Close();
-            msg = string.Format("{0} has disconnected", obj.username);
+            clients.TryRemove(obj.id, out Client tmp);
+            msg = string.Format("{0} has disconnected", tmp.username);
             WriteLog(Utils.SystemMsg(msg));
             Send(msg, obj);
         }
@@ -167,18 +172,20 @@ namespace Sum_Calculator_RPC_Server
                     {
                         try
                         {
-                            client = new Client();
-                            client.username = "Client";
-                            client.client = listener.AcceptTcpClient();
-                            client.stream = client.client.GetStream();
-                            client.buffer = new byte[client.client.ReceiveBufferSize];
-                            client.data = new StringBuilder();
-                            client.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
-                            Thread th = new Thread(() => Connection(client))
+                            Client obj = new Client();
+                            obj.id = id;
+                            obj.username = "Client " + id;
+                            obj.client = listener.AcceptTcpClient();
+                            obj.stream = obj.client.GetStream();
+                            obj.buffer = new byte[obj.client.ReceiveBufferSize];
+                            obj.data = new StringBuilder();
+                            obj.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                            Thread th = new Thread(() => Connection(obj))
                             {
                                 IsBackground = true
                             };
                             th.Start();
+                            id++;
                         }
                         catch (Exception ex)
                         {
@@ -283,7 +290,7 @@ namespace Sum_Calculator_RPC_Server
             }
         }
 
-        private void BeginWrite(string msg, Client obj) // send the message to a specific client
+        private void BeginWrite(string msg, Client obj)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(msg);
             if (obj.client.Connected)
@@ -295,6 +302,25 @@ namespace Sum_Calculator_RPC_Server
                 catch (Exception ex)
                 {
                     WriteLog(Utils.ErrorMsg(ex.Message));
+                }
+            }
+        }
+
+        private void BeginWrite(string msg, long id = -1)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
+            foreach (KeyValuePair<long, Client> obj in clients)
+            {
+                if (id != obj.Value.id && obj.Value.client.Connected)
+                {
+                    try
+                    {
+                        obj.Value.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        WriteLog(Utils.ErrorMsg(ex.Message));
+                    }
                 }
             }
         }
@@ -311,21 +337,43 @@ namespace Sum_Calculator_RPC_Server
             }
         }
 
-        private void Disconnect()
+        private void Send(string msg, long id = -1)
+        {
+            if (send == null || send.IsCompleted)
+            {
+                send = Task.Factory.StartNew(() => BeginWrite(msg, id));
+            }
+            else
+            {
+                send.ContinueWith(antecendent => BeginWrite(msg, id));
+            }
+        }
+
+        private void Disconnect(long id = -1)
         {
             if (disconnect == null || !disconnect.IsAlive)
             {
                 disconnect = new Thread(() =>
                 {
-                    if(client != null)
-                        client.client.Close();
+                    if (id >= 0)
+                    {
+                        clients.TryGetValue(id, out Client obj);
+                        obj.client.Close();
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<long, Client> obj in clients)
+                        {
+                            obj.Value.client.Close();
+                        }
+                    }
                 })
                 {
                     IsBackground = true
                 };
                 disconnect.Start();
             }
-            SetStateDisconnectButton(false);
+            //SetStateDisconnectButton(false);
         }
 
         private void stopBtn_Click(object sender, EventArgs e)
