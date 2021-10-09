@@ -88,7 +88,11 @@ namespace Sum_Calculator_RPC_Client
                 client.data.AppendFormat("{0}", Encoding.UTF8.GetString(client.buffer, 0, bytes));
                 try
                 {
-                    if (!client.stream.DataAvailable)
+                    if (client.stream.DataAvailable)
+                    {
+                        client.stream.BeginWrite(client.buffer, 0, client.buffer.Length, new AsyncCallback(Write), null);
+                    }
+                    else
                     {
                         WriteLog(client.data.ToString());
                         client.data.Clear();
@@ -207,13 +211,17 @@ namespace Sum_Calculator_RPC_Client
             }
         }
 
+
+
         private void BeginWrite(string msg)
         {
+            // chuyển msg thành mảng bytes
             byte[] buffer = Encoding.UTF8.GetBytes(msg);
             if (client.client.Connected)
             {
                 try
                 {
+                    // gửi bytes lên server, kết quả trả về callback Write
                     client.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), null);
                 }
                 catch (Exception ex)
@@ -224,13 +232,14 @@ namespace Sum_Calculator_RPC_Client
         }
 
 
-        // Hàm để nhận gói tin từ server
+        // Hàm callback xử lý cho Write
         private void Write(IAsyncResult result)
         {
             if (client.client.Connected)
             {
                 try
                 {
+                    // kết thúc quá trình gửi packet
                     client.stream.EndWrite(result);
                 }
                 catch (Exception ex)
@@ -241,7 +250,6 @@ namespace Sum_Calculator_RPC_Client
         }
 
         // Hàm để send gói tin tới sever
-
         private void Send(string msg)
         {
             if (send == null || send.IsCompleted)

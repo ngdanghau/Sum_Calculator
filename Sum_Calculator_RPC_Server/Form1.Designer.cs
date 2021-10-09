@@ -41,6 +41,7 @@ namespace Sum_Calculator_RPC_Server
             this.disconnectBtn = new System.Windows.Forms.Button();
             this.clearBtn = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.TextBox();
+            this.resetBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -115,6 +116,7 @@ namespace Sum_Calculator_RPC_Server
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.resetBtn);
             this.groupBox2.Controls.Add(this.disconnectBtn);
             this.groupBox2.Controls.Add(this.clearBtn);
             this.groupBox2.Controls.Add(this.logTextBox);
@@ -155,6 +157,16 @@ namespace Sum_Calculator_RPC_Server
             this.logTextBox.Size = new System.Drawing.Size(546, 265);
             this.logTextBox.TabIndex = 0;
             // 
+            // resetBtn
+            // 
+            this.resetBtn.Location = new System.Drawing.Point(102, 19);
+            this.resetBtn.Name = "resetBtn";
+            this.resetBtn.Size = new System.Drawing.Size(75, 23);
+            this.resetBtn.TabIndex = 8;
+            this.resetBtn.Text = "Reset Sum";
+            this.resetBtn.UseVisualStyleBackColor = true;
+            this.resetBtn.Click += new System.EventHandler(this.resetBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,6 +200,7 @@ namespace Sum_Calculator_RPC_Server
         private System.Windows.Forms.Button clearBtn;
         private System.Windows.Forms.Button stopBtn;
         private System.Windows.Forms.Button disconnectBtn;
+        private System.Windows.Forms.Button resetBtn;
     }
 }
 
