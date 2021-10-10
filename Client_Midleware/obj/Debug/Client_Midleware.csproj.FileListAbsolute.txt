@@ -1,0 +1,5 @@
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Client_Midleware\bin\Debug\Client_Midleware.dll
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Client_Midleware\bin\Debug\Client_Midleware.pdb
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Client_Midleware\obj\Debug\Client_Midleware.csproj.CoreCompileInputs.cache
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Client_Midleware\obj\Debug\Client_Midleware.dll
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Client_Midleware\obj\Debug\Client_Midleware.pdb

@@ -1,19 +1,21 @@
 ﻿using System;
-using System.Net;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sum_Calculator_RPC_Client
 {
-    public class Utils
+    class Msg
     {
-        public static string ErrorMsg(string msg)
+        public static string Error(string msg)
         {
             return string.Format("ERROR: {0}", msg);
         }
 
-        public static string SystemMsg(string msg)
+        public static string System(string msg)
         {
             return string.Format("SYSTEM: {0}", msg);
         }
     }
-
 }

@@ -54,15 +54,6 @@ namespace Sum_Calculator_RPC_Server
             });
         }
 
-        // set trạng thái cho mỗi nút Dissconet Client
-        private void SetStateDisconnectButton(bool status)
-        {
-            disconnectBtn.Invoke((MethodInvoker)delegate
-            {
-                disconnectBtn.Enabled = status;
-            });
-        }
-
         /// <summary> ghi log vào textbox</summary>
         /// <param name="msg">Nội dung cần hiện thị ra textbox, bỏ trống thì là xóa hết textbox</param>
         /// <returns> void </returns>
@@ -174,7 +165,6 @@ namespace Sum_Calculator_RPC_Server
 
             string msg = string.Format("{0} has connected", obj.username);
             WriteLog(Utils.SystemMsg(msg));
-            SetStateDisconnectButton(true);
 
             // gửi lại cho client kết quả kết nối
             Send(Utils.SystemMsg(msg), obj);
@@ -411,12 +401,12 @@ namespace Sum_Calculator_RPC_Server
                 };
                 disconnect.Start();
             }
-            SetStateDisconnectButton(false);
         }
 
         private void stopBtn_Click(object sender, EventArgs e)
         {
             Disconnect();
+            Active(false);
         }
 
         private void clearBtn_Click(object sender, EventArgs e)
@@ -429,12 +419,6 @@ namespace Sum_Calculator_RPC_Server
             exit = true;
             active = false;
             Disconnect();
-        }
-
-        private void disconnectBtn_Click(object sender, EventArgs e)
-        {
-            Disconnect();
-            SetStateDisconnectButton(clients.Count > 0);
         }
 
         private void resetBtn_Click(object sender, EventArgs e)

@@ -29,10 +29,12 @@ namespace Sum_Calculator_RPC_Client
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.connectBtn = new System.Windows.Forms.Button();
             this.sendBtn = new System.Windows.Forms.Button();
             this.disconnectBtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtIP = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -40,7 +42,6 @@ namespace Sum_Calculator_RPC_Client
             this.clearBtn = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.TextBox();
             this.sendTextBox = new System.Windows.Forms.TextBox();
-            this.txtIP = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -90,6 +91,13 @@ namespace Sum_Calculator_RPC_Client
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Thông tin server";
+            // 
+            // txtIP
+            // 
+            this.txtIP.Location = new System.Drawing.Point(68, 15);
+            this.txtIP.Name = "txtIP";
+            this.txtIP.Size = new System.Drawing.Size(161, 20);
+            this.txtIP.TabIndex = 13;
             // 
             // label2
             // 
@@ -154,13 +162,6 @@ namespace Sum_Calculator_RPC_Client
             this.sendTextBox.Size = new System.Drawing.Size(161, 20);
             this.sendTextBox.TabIndex = 9;
             // 
-            // txtIP
-            // 
-            this.txtIP.Location = new System.Drawing.Point(69, 12);
-            this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(160, 20);
-            this.txtIP.TabIndex = 13;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,6 +169,9 @@ namespace Sum_Calculator_RPC_Client
             this.ClientSize = new System.Drawing.Size(509, 449);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Sum Calculator RPC Client";

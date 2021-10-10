@@ -38,10 +38,9 @@ namespace Sum_Calculator_RPC_Server
             this.txtIP = new System.Windows.Forms.TextBox();
             this.startBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.disconnectBtn = new System.Windows.Forms.Button();
+            this.resetBtn = new System.Windows.Forms.Button();
             this.clearBtn = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.TextBox();
-            this.resetBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -117,7 +116,6 @@ namespace Sum_Calculator_RPC_Server
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.resetBtn);
-            this.groupBox2.Controls.Add(this.disconnectBtn);
             this.groupBox2.Controls.Add(this.clearBtn);
             this.groupBox2.Controls.Add(this.logTextBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 134);
@@ -127,16 +125,15 @@ namespace Sum_Calculator_RPC_Server
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Log";
             // 
-            // disconnectBtn
+            // resetBtn
             // 
-            this.disconnectBtn.Enabled = false;
-            this.disconnectBtn.Location = new System.Drawing.Point(446, 19);
-            this.disconnectBtn.Name = "disconnectBtn";
-            this.disconnectBtn.Size = new System.Drawing.Size(110, 23);
-            this.disconnectBtn.TabIndex = 7;
-            this.disconnectBtn.Text = "Disconnect Client";
-            this.disconnectBtn.UseVisualStyleBackColor = true;
-            this.disconnectBtn.Click += new System.EventHandler(this.disconnectBtn_Click);
+            this.resetBtn.Location = new System.Drawing.Point(102, 19);
+            this.resetBtn.Name = "resetBtn";
+            this.resetBtn.Size = new System.Drawing.Size(75, 23);
+            this.resetBtn.TabIndex = 8;
+            this.resetBtn.Text = "Reset Sum";
+            this.resetBtn.UseVisualStyleBackColor = true;
+            this.resetBtn.Click += new System.EventHandler(this.resetBtn_Click);
             // 
             // clearBtn
             // 
@@ -156,16 +153,6 @@ namespace Sum_Calculator_RPC_Server
             this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.logTextBox.Size = new System.Drawing.Size(546, 265);
             this.logTextBox.TabIndex = 0;
-            // 
-            // resetBtn
-            // 
-            this.resetBtn.Location = new System.Drawing.Point(102, 19);
-            this.resetBtn.Name = "resetBtn";
-            this.resetBtn.Size = new System.Drawing.Size(75, 23);
-            this.resetBtn.TabIndex = 8;
-            this.resetBtn.Text = "Reset Sum";
-            this.resetBtn.UseVisualStyleBackColor = true;
-            this.resetBtn.Click += new System.EventHandler(this.resetBtn_Click);
             // 
             // Form1
             // 
@@ -199,7 +186,6 @@ namespace Sum_Calculator_RPC_Server
         private System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.Button clearBtn;
         private System.Windows.Forms.Button stopBtn;
-        private System.Windows.Forms.Button disconnectBtn;
         private System.Windows.Forms.Button resetBtn;
     }
 }
