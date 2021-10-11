@@ -17,7 +17,6 @@ namespace Sum_Calculator_RPC_Server
         private Thread listener = null;
         private Task send = null;
         private Thread disconnect = null;
-        private bool exit = false;
         private long id = 0;
         private ConcurrentDictionary<long, Client> clients = new ConcurrentDictionary<long, Client>();
         private int SumTotal = 0;
@@ -59,29 +58,23 @@ namespace Sum_Calculator_RPC_Server
         /// <returns> void </returns>
         private void WriteLog(string msg = "")
         {
-            if (!exit)
+            logTextBox.Invoke((MethodInvoker)delegate
             {
-                logTextBox.Invoke((MethodInvoker)delegate
+                if (msg.Length > 0)
                 {
-                    if (msg.Length > 0)
-                    {
-                        logTextBox.AppendText(string.Format("[ {0} ] {1}{2}", DateTime.Now.ToString("HH:mm"), msg, Environment.NewLine));
-                    }
-                    else
-                    {
-                        logTextBox.Clear();
-                    }
-                });
-            }
+                    logTextBox.AppendText(string.Format("[ {0} ] {1}{2}", DateTime.Now.ToString("HH:mm"), msg, Environment.NewLine));
+                }
+                else
+                {
+                    logTextBox.Clear();
+                }
+            });
         }
 
         private void Active(bool status)
         {
-            if (!exit)
-            {
-                active = status;
-                SetStateButton(status);
-            }
+            active = status;
+            SetStateButton(status);
         }
 
         // kiểm tra số và parse trả về
@@ -416,7 +409,6 @@ namespace Sum_Calculator_RPC_Server
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            exit = true;
             active = false;
             Disconnect();
         }

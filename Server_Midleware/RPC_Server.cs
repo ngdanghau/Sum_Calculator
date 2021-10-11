@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server_Midleware
 {
-    public class Class1
+    public class RPC_Server
     {
     }
 }
