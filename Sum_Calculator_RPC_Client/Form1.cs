@@ -138,7 +138,7 @@ namespace Sum_Calculator_RPC_Client
         // sự kiện click send 
         private void sendBtn_Click(object sender, EventArgs e)
         {
-            if (!rpc.obj.client.Connected)
+            if (!rpc.client.Connected)
             {
                 WriteLog(Msg.System("You are now disconnected"));
                 return;
@@ -150,7 +150,7 @@ namespace Sum_Calculator_RPC_Client
                 {
                     string msg = sendTextBox.Text;
                     sendTextBox.Clear();
-                    WriteLog(string.Format("{0} (You): {1}", rpc.obj.username, msg));
+                    WriteLog(string.Format("{0} (You): {1}", rpc.username, msg));
                     if (connected)
                     {
                         rpc.Send(msg);

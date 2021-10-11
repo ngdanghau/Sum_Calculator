@@ -11,14 +11,21 @@ namespace Client_Midleware
 {
     public delegate void ReadEventDelegate(string msg);
 
-    public delegate void DisconnectEventDelegate();
-
     public delegate void ErrorEventDelegate(string msg);
 
     public class RPC
     {
         private Task send = null;
-        public Client obj;
+
+
+        public string username;
+        public TcpClient client;
+        private NetworkStream stream;
+        private byte[] buffer;
+        private StringBuilder data;
+        private EventWaitHandle handle;
+
+
         ReadEventDelegate ReadAction = null;
         ErrorEventDelegate ErrorAction = null;
 
@@ -26,12 +33,12 @@ namespace Client_Midleware
         {
             // chuyển msg thành mảng bytes
             byte[] buffer = Encoding.UTF8.GetBytes(msg);
-            if (obj.client.Connected)
+            if (client.Connected)
             {
                 try
                 {
                     // gửi bytes lên server, kết quả trả về callback Write
-                    obj.stream.Write(buffer, 0, buffer.Length);
+                    stream.Write(buffer, 0, buffer.Length);
                 }
                 catch (Exception ex)
                 {
@@ -57,12 +64,12 @@ namespace Client_Midleware
         private void Read(IAsyncResult result)
         {
             int bytes = 0;
-            if (obj.client.Connected)
+            if (client.Connected)
             {
                 try
                 {
                     // kết thúc việc đọc
-                    bytes = obj.stream.EndRead(result);
+                    bytes = stream.EndRead(result);
                 }
                 catch (Exception ex)
                 {
@@ -74,67 +81,64 @@ namespace Client_Midleware
             if (bytes > 0)
             {
                 // chuyển sang thành string
-                obj.data.AppendFormat("{0}", Encoding.UTF8.GetString(obj.buffer, 0, bytes));
+                data.AppendFormat("{0}", Encoding.UTF8.GetString(buffer, 0, bytes));
                 try
                 {
                     // nếu vẫn tồn tại gói tin thì đọc tiếp lại lần nữa
-                    if (obj.stream.DataAvailable)
+                    if (stream.DataAvailable)
                     {
-                        obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), null);
+                        stream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(Read), null);
                     }
                     else
                     {
                         // nếu không thì gọi Callback tên là ReadAction 
-                        ReadAction(obj.data.ToString());
-                        obj.data.Clear();
-                        obj.handle.Set();
+                        ReadAction(data.ToString());
+                        data.Clear();
+                        handle.Set();
                     }
                 }
                 catch (Exception ex)
                 {
                     // nếu lỗi thì gọi Callback ErrorAction
-                    obj.data.Clear();
-                    obj.handle.Set();
+                    data.Clear();
+                    handle.Set();
                     ErrorAction(ex.Message);
                 }
             }
             else
             {
-                obj.client.Close();
-                obj.handle.Set();
+                client.Close();
+                handle.Set();
             }
         }
 
-        public Client CreateClient(IPAddress ip, int port, string username = "Client")
+        public void CreateClient(IPAddress ip, int port, string username = "Client")
         {
-            obj = new Client();
-            obj.username = username;
-            obj.client = new TcpClient();
-            obj.client.Connect(ip, port);
-            obj.stream = obj.client.GetStream();
-            obj.buffer = new byte[obj.client.ReceiveBufferSize];
-            obj.data = new StringBuilder();
-            obj.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
-
-            return obj;
+            this.username = username;
+            this.client = new TcpClient();
+            this.client.Connect(ip, port);
+            this.stream = client.GetStream();
+            this.buffer = new byte[client.ReceiveBufferSize];
+            this.data = new StringBuilder();
+            this.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
         public void CloseConnection()
         {
-            obj.client.Close();
+            client.Close();
         }
 
         public void StartConnection(ReadEventDelegate ReadEvent, ErrorEventDelegate ErrorEvent)
         {
             ReadAction += ReadEvent;
             ErrorAction += ErrorEvent;
-            while (obj.client.Connected)
+            while (client.Connected)
             {
                 try
                 {
                     // đọc gói tin từ server, nếu có gói tin thì hàm callback tên là Read sẽ được gọi
-                    obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), null);
-                    obj.handle.WaitOne();
+                    stream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(Read), null);
+                    handle.WaitOne();
                 }
                 catch (Exception ex)
                 {
