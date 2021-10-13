@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace Sum_Calculator_RPC_Server
+namespace Server_Midleware
 {
     public class Client 
     {

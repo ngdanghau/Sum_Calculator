@@ -41,7 +41,7 @@ namespace Client_Midleware
             {
                 try
                 {
-                    ip = Dns.Resolve(address).AddressList[0];
+                    ip = Dns.Resolve(address).AddressList[0];//trả về đối tượng ip từ giá trị string ip.
                 }
                 catch
                 {

@@ -52,11 +52,11 @@ namespace Client_Midleware
         {
             if (send == null || send.IsCompleted)
             {
-                send = Task.Factory.StartNew(() => BeginWrite(msg));
+                send = Task.Factory.StartNew(() => BeginWrite(msg));//tạo mới nếu chưa có.
             }
             else
             {
-                send.ContinueWith(antecendent => BeginWrite(msg));
+                send.ContinueWith(antecendent => BeginWrite(msg));//tiếp tục ghi theo cách đồng bộ.
             }
         }
 
@@ -68,7 +68,7 @@ namespace Client_Midleware
             {
                 try
                 {
-                    // kết thúc việc đọc
+                    // đọc toàn bộ cho đến khi hết.
                     bytes = stream.EndRead(result);
                 }
                 catch (Exception ex)
@@ -111,7 +111,7 @@ namespace Client_Midleware
                 handle.Set();
             }
         }
-
+        //kết nối với server.
         public void CreateClient(IPAddress ip, int port, string username = "Client")
         {
             this.username = username;
