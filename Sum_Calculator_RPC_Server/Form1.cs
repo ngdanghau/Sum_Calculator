@@ -15,62 +15,22 @@ namespace Sum_Calculator_RPC_Server
     {
         private bool active = false;
         private Thread listener = null;
-        private Task send = null;
         private Thread disconnect = null;
-        private long id = 0;
+        
         private ConcurrentDictionary<long, Client> clients = new ConcurrentDictionary<long, Client>();
-        private int SumTotal = 0;
+        
+        private RPC_Server rpc = new RPC_Server(); 
+
 
         public Form1()
         {
             InitializeComponent();
             txtPort.Text = "8080";
             txtIP.Text = "127.0.0.1";
+
         }
 
-        // set trạng thái Enable các nút
-        private void SetStateButton(bool status)
-        {
-            startBtn.Invoke((MethodInvoker)delegate //để chỉnh trạng thái button từ một luồng khác.
-            {
-
-                if (status)
-                {
-                    txtIP.Enabled = false;
-                    txtPort.Enabled = false;
-                    startBtn.Enabled = false;
-                    stopBtn.Enabled = true;
-                    WriteLog(Utils.SystemMsg("Server has started"));
-                }
-                else
-                {
-                    txtIP.Enabled = true;
-                    txtPort.Enabled = true;
-                    startBtn.Enabled = true;
-                    stopBtn.Enabled = false;
-                    WriteLog(Utils.SystemMsg("Server has stopped"));
-                }
-            });
-        }
-
-        /// <summary> ghi log vào textbox</summary>
-        /// <param name="msg">Nội dung cần hiện thị ra textbox, bỏ trống thì là xóa hết textbox</param>
-        /// <returns> void </returns>
-        private void WriteLog(string msg = "")
-        {
-            
-            logTextBox.Invoke((MethodInvoker)delegate
-            {
-                if (msg.Length > 0)
-                {
-                    logTextBox.AppendText(string.Format("[ {0} ] {1}{2}", DateTime.Now.ToString("HH:mm"), msg, Environment.NewLine));
-                }
-                else
-                {
-                    logTextBox.Clear();
-                }
-            });
-        }
+        
 
         private void Active(bool status)
         {
@@ -78,115 +38,7 @@ namespace Sum_Calculator_RPC_Server
             SetStateButton(status);
         }
 
-        // kiểm tra số và parse trả về
-        private int Validation(String input)
-        {
-            int i;
-            if (int.TryParse(input, out i) == false)
-            {
-                this.WriteLog(Utils.SystemMsg("Please only enter a number"));
-                return -1;
-            }
-            else if (i < 1 || i > 10)
-            {
-                WriteLog(Utils.SystemMsg("Please enter a number between 1 and 10"));
-                return -1;
-            }
-            else
-                return i;
-        }
 
-        /// <summary> hàm xử lý khi nhận được gói tin</summary>
-        /// <param name="result">Kết quả trả về của cái TcpListener</param>
-        /// <returns> void </returns
-        private void Read(IAsyncResult result)
-        {
-            Client obj = (Client)result.AsyncState;
-            int bytes = 0;
-            if (obj.client.Connected)
-            {
-                try
-                {
-                    bytes = obj.stream.EndRead(result);
-                }
-                catch (Exception ex)
-                {
-                    WriteLog(Utils.ErrorMsg(ex.Message));
-                }
-            }
-            if (bytes > 0)
-            {
-                obj.data.AppendFormat("{0}", Encoding.UTF8.GetString(obj.buffer, 0, bytes));
-                try
-                {
-                    if (obj.stream.DataAvailable)
-                    {
-                        obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), obj);
-                    }
-                    else
-                    {
-                        int value = Validation(obj.data.ToString());
-                        if (value > -1)
-                        {
-                            SumTotal += value;
-                            string msg = string.Format("{0} send: {1} ====> Sum: {2}", obj.username, obj.data, SumTotal);
-                            WriteLog(msg);
-                        }
-                        obj.data.Clear();
-                        obj.handle.Set(); //cho luồng khác chạy
-                    }
-                }
-                catch (Exception ex)
-                {
-                    obj.data.Clear();
-                    WriteLog(Utils.ErrorMsg(ex.Message));
-                    obj.handle.Set();
-                }
-            }
-            else
-            {
-                obj.client.Close();
-                obj.handle.Set();
-            }
-        }
-
-
-        // Hàm xử lý kết nối và gửi nhận packet
-        private void Connection(Client obj)
-        {
-            // thêm vào danh sách các client
-            clients.TryAdd(obj.id, obj);
-
-            string msg = string.Format("{0} has connected", obj.username);
-            WriteLog(Utils.SystemMsg(msg));
-
-            // gửi lại cho client kết quả kết nối
-            Send(Utils.SystemMsg(msg), obj);
-
-            // chạy trong khi vẫn kết nối
-            while (obj.client.Connected)
-            {
-                try
-                {
-                    // bắt đầu nhận packet và nếu có sẽ gửi vào callback tên là Read
-                    obj.stream.BeginRead(obj.buffer, 0, obj.buffer.Length, new AsyncCallback(Read), obj);
-                    obj.handle.WaitOne();
-                }
-                catch (Exception ex)
-                {
-                    WriteLog(Utils.ErrorMsg(ex.Message));
-                }
-            }
-            // đóng TcpListener
-            obj.client.Close();
-            // đồng thời xóa client mới close trong danh sách
-            clients.TryRemove(obj.id, out Client tmp);
-
-            // gửi lại trạng thái cho client biết là đã bị disconnect
-            msg = string.Format("{0} has disconnected", tmp.username);
-            WriteLog(Utils.SystemMsg(msg));
-            Send(msg, obj);
-        }
 
         private void Listener(IPAddress ip, int port)
         {
@@ -205,20 +57,14 @@ namespace Sum_Calculator_RPC_Server
                         try
                         {
                             // tạo một đối tượng Client
-                            Client obj = new Client();
-                            obj.id = id;
-                            obj.username = "Client " + id;
-                            obj.client = listener.AcceptTcpClient();
-                            obj.stream = obj.client.GetStream();
-                            obj.buffer = new byte[obj.client.ReceiveBufferSize];
-                            obj.data = new StringBuilder();
-                            obj.handle = new EventWaitHandle(false, EventResetMode.AutoReset);
-                            Thread th = new Thread(() => Connection(obj))
+                            Client obj = rpc.createNewClient(listener); 
+                           
+                            Thread th = new Thread(() => rpc.Connection(clients,obj))
                             {
                                 IsBackground = true
                             };
                             th.Start();
-                            id++;
+                            
                         }
                         catch (Exception ex)
                         {
@@ -260,10 +106,9 @@ namespace Sum_Calculator_RPC_Server
                
                 
                 
-                
-                
                 try
                 {
+                    rpc.inheritMethod(WriteLog); 
                     IPAddress ip = Helper.getIp(address);
                     int port = Helper.ValidatePort(number);
                     Helper.ValidateUsername(username); 
@@ -281,98 +126,13 @@ namespace Sum_Calculator_RPC_Server
             }
         }
 
-        private void Write(IAsyncResult result)
-        {
-            Client obj = (Client)result.AsyncState;
-            if (obj.client.Connected)
-            {
-                try
-                {
-                    obj.stream.EndWrite(result);
-                }
-                catch (Exception ex)
-                {
-                    WriteLog(Utils.ErrorMsg(ex.Message));
-                }
-            }
-        }
 
-        private void BeginWrite(string msg, Client obj)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(msg);
-            if (obj.client.Connected)
-            {
-                try
-                {
-                    obj.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj); //đưa message cho client.
-                }
-                catch (Exception ex)
-                {
-                    WriteLog(Utils.ErrorMsg(ex.Message));
-                }
-            }
-        }
 
-        private void BeginWrite(string msg, long id = -1)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(msg);
-            foreach (KeyValuePair<long, Client> obj in clients)
-            {
-                if (id != obj.Value.id && obj.Value.client.Connected)
-                {
-                    try
-                    {
-                        obj.Value.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj.Value);
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteLog(Utils.ErrorMsg(ex.Message));
-                    }
-                }
-            }
-        }
-     
-        private void Send(string msg, Client obj)
-        {
-            if (send == null || send.IsCompleted)
-            {
-                send = Task.Factory.StartNew(() => BeginWrite(msg, obj));
-            }
-            else
-            {
-                send.ContinueWith(antecendent => BeginWrite(msg, obj));
-            }
-        }
-
-        private void Disconnect(long id = -1)
-        {
-            if (disconnect == null || !disconnect.IsAlive)
-            {
-                disconnect = new Thread(() =>
-                {
-                    if (id >= 0)
-                    {
-                        clients.TryGetValue(id, out Client obj);
-                        obj.client.Close();
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<long, Client> obj in clients)
-                        {
-                            obj.Value.client.Close();
-                        }
-                    }
-                })
-                {
-                    IsBackground = true
-                };
-                disconnect.Start();
-            }
-        }
+      
 
         private void stopBtn_Click(object sender, EventArgs e)
         {
-            Disconnect();
+            rpc.Disconnect(clients,disconnect);
             Active(false);
         }
 
@@ -384,13 +144,58 @@ namespace Sum_Calculator_RPC_Server
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             active = false;
-            Disconnect();
+            rpc.Disconnect(clients,disconnect);
+
         }
 
         private void resetBtn_Click(object sender, EventArgs e)
         {
             WriteLog(Utils.SystemMsg("Reset Sum = 0"));
-            SumTotal = 0;
+            rpc.resetTotal(); 
+        }
+
+        // set trạng thái Enable các nút
+        private void SetStateButton(bool status)
+        {
+            startBtn.Invoke((MethodInvoker)delegate //để chỉnh trạng thái button từ một luồng khác.
+            {
+
+                if (status)
+                {
+                    txtIP.Enabled = false;
+                    txtPort.Enabled = false;
+                    startBtn.Enabled = false;
+                    stopBtn.Enabled = true;
+                    WriteLog(Utils.SystemMsg("Server has started"));
+                }
+                else
+                {
+                    txtIP.Enabled = true;
+                    txtPort.Enabled = true;
+                    startBtn.Enabled = true;
+                    stopBtn.Enabled = false;
+                    WriteLog(Utils.SystemMsg("Server has stopped"));
+                }
+            });
+        }
+
+        /// <summary> ghi log vào textbox</summary>
+        /// <param name="msg">Nội dung cần hiện thị ra textbox, bỏ trống thì là xóa hết textbox</param>
+        /// <returns> void </returns>
+        private void WriteLog(string msg = "")
+        {
+
+            logTextBox.Invoke((MethodInvoker)delegate
+            {
+                if (msg.Length > 0)
+                {
+                    logTextBox.AppendText(string.Format("[ {0} ] {1}{2}", DateTime.Now.ToString("HH:mm"), msg, Environment.NewLine));
+                }
+                else
+                {
+                    logTextBox.Clear();
+                }
+            });
         }
     }
 }

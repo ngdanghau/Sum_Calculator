@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Sum_Calculator_RPC_Server
+namespace Server_Midleware
 {
     public class Utils
     {
