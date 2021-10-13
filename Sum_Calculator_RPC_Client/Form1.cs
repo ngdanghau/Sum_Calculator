@@ -72,9 +72,9 @@ namespace Sum_Calculator_RPC_Client
             {
                 // tạo đối tượng RPC
                 rpc = new RPC();
-                rpc.CreateClient(ip, port);
+                rpc.CreateClient(ip, port); //kết nối đến server thông qua port và ip tương ứng.
                 // set trạng thái connect
-                Connected(true);
+                Connected(true); //thay đổi trạng thái button.
                 // tạo một connection và bind 2 callback là ReadEvent và ErrorEvent vào
                 // mỗi khi có một gói tin gửi đến client => ReadEvent sẽ được gọi
                 // mỗi khi có lỗi Exception xảy ra, Errorvent sẽ được gọi
@@ -109,7 +109,7 @@ namespace Sum_Calculator_RPC_Client
                 }
                 catch(Exception ex)
                 {
-                    WriteLog(Msg.System(ex.Message));
+                    WriteLog(Msg.System(ex.Message)); 
                 }
             }
         }

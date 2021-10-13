@@ -48,9 +48,10 @@ namespace Sum_Calculator_RPC_Client
             // 
             // connectBtn
             // 
-            this.connectBtn.Location = new System.Drawing.Point(6, 65);
+            this.connectBtn.Location = new System.Drawing.Point(8, 80);
+            this.connectBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.connectBtn.Name = "connectBtn";
-            this.connectBtn.Size = new System.Drawing.Size(100, 23);
+            this.connectBtn.Size = new System.Drawing.Size(133, 28);
             this.connectBtn.TabIndex = 0;
             this.connectBtn.Text = "Connect";
             this.connectBtn.UseVisualStyleBackColor = true;
@@ -58,9 +59,10 @@ namespace Sum_Calculator_RPC_Client
             // 
             // sendBtn
             // 
-            this.sendBtn.Location = new System.Drawing.Point(9, 51);
+            this.sendBtn.Location = new System.Drawing.Point(12, 63);
+            this.sendBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.sendBtn.Name = "sendBtn";
-            this.sendBtn.Size = new System.Drawing.Size(75, 23);
+            this.sendBtn.Size = new System.Drawing.Size(100, 28);
             this.sendBtn.TabIndex = 1;
             this.sendBtn.Text = "Send";
             this.sendBtn.UseVisualStyleBackColor = true;
@@ -69,9 +71,10 @@ namespace Sum_Calculator_RPC_Client
             // disconnectBtn
             // 
             this.disconnectBtn.Enabled = false;
-            this.disconnectBtn.Location = new System.Drawing.Point(133, 65);
+            this.disconnectBtn.Location = new System.Drawing.Point(176, 78);
+            this.disconnectBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.disconnectBtn.Name = "disconnectBtn";
-            this.disconnectBtn.Size = new System.Drawing.Size(96, 23);
+            this.disconnectBtn.Size = new System.Drawing.Size(128, 28);
             this.disconnectBtn.TabIndex = 2;
             this.disconnectBtn.Text = "Disconnect";
             this.disconnectBtn.UseVisualStyleBackColor = true;
@@ -85,42 +88,48 @@ namespace Sum_Calculator_RPC_Client
             this.groupBox1.Controls.Add(this.txtPort);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.connectBtn);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(16, 15);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(485, 100);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(647, 123);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Thông tin server";
             // 
             // txtIP
             // 
-            this.txtIP.Location = new System.Drawing.Point(68, 15);
+            this.txtIP.Location = new System.Drawing.Point(91, 18);
+            this.txtIP.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(161, 20);
+            this.txtIP.Size = new System.Drawing.Size(213, 22);
             this.txtIP.TabIndex = 13;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 42);
+            this.label2.Location = new System.Drawing.Point(8, 52);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.Size = new System.Drawing.Size(38, 17);
             this.label2.TabIndex = 8;
             this.label2.Text = "Port:";
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(68, 39);
+            this.txtPort.Location = new System.Drawing.Point(91, 48);
+            this.txtPort.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(161, 20);
+            this.txtPort.Size = new System.Drawing.Size(213, 22);
             this.txtPort.TabIndex = 7;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Location = new System.Drawing.Point(8, 20);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.Size = new System.Drawing.Size(71, 17);
             this.label1.TabIndex = 6;
             this.label1.Text = "Địa chỉ IP:";
             // 
@@ -130,18 +139,21 @@ namespace Sum_Calculator_RPC_Client
             this.groupBox2.Controls.Add(this.logTextBox);
             this.groupBox2.Controls.Add(this.sendTextBox);
             this.groupBox2.Controls.Add(this.sendBtn);
-            this.groupBox2.Location = new System.Drawing.Point(12, 118);
+            this.groupBox2.Location = new System.Drawing.Point(16, 145);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(485, 319);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Size = new System.Drawing.Size(647, 393);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Ứng dụng";
             // 
             // clearBtn
             // 
-            this.clearBtn.Location = new System.Drawing.Point(404, 60);
+            this.clearBtn.Location = new System.Drawing.Point(539, 74);
+            this.clearBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.clearBtn.Name = "clearBtn";
-            this.clearBtn.Size = new System.Drawing.Size(75, 23);
+            this.clearBtn.Size = new System.Drawing.Size(100, 28);
             this.clearBtn.TabIndex = 11;
             this.clearBtn.Text = "Clear";
             this.clearBtn.UseVisualStyleBackColor = true;
@@ -149,28 +161,31 @@ namespace Sum_Calculator_RPC_Client
             // 
             // logTextBox
             // 
-            this.logTextBox.Location = new System.Drawing.Point(9, 89);
+            this.logTextBox.Location = new System.Drawing.Point(12, 110);
+            this.logTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.logTextBox.Multiline = true;
             this.logTextBox.Name = "logTextBox";
-            this.logTextBox.Size = new System.Drawing.Size(470, 224);
+            this.logTextBox.Size = new System.Drawing.Size(625, 275);
             this.logTextBox.TabIndex = 10;
             // 
             // sendTextBox
             // 
-            this.sendTextBox.Location = new System.Drawing.Point(9, 19);
+            this.sendTextBox.Location = new System.Drawing.Point(12, 23);
+            this.sendTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.sendTextBox.Name = "sendTextBox";
-            this.sendTextBox.Size = new System.Drawing.Size(161, 20);
+            this.sendTextBox.Size = new System.Drawing.Size(213, 22);
             this.sendTextBox.TabIndex = 9;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(509, 449);
+            this.ClientSize = new System.Drawing.Size(679, 553);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

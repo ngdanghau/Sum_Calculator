@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Server_Midleware; 
 namespace Sum_Calculator_RPC_Server
 {
     public partial class Form1 : Form
@@ -31,7 +31,7 @@ namespace Sum_Calculator_RPC_Server
         // set trạng thái Enable các nút
         private void SetStateButton(bool status)
         {
-            startBtn.Invoke((MethodInvoker)delegate
+            startBtn.Invoke((MethodInvoker)delegate //để chỉnh trạng thái button từ một luồng khác.
             {
 
                 if (status)
@@ -58,6 +58,7 @@ namespace Sum_Calculator_RPC_Server
         /// <returns> void </returns>
         private void WriteLog(string msg = "")
         {
+            
             logTextBox.Invoke((MethodInvoker)delegate
             {
                 if (msg.Length > 0)
@@ -97,7 +98,7 @@ namespace Sum_Calculator_RPC_Server
 
         /// <summary> hàm xử lý khi nhận được gói tin</summary>
         /// <param name="result">Kết quả trả về của cái TcpListener</param>
-        /// <returns> void </returns>
+        /// <returns> void </returns
         private void Read(IAsyncResult result)
         {
             Client obj = (Client)result.AsyncState;
@@ -132,7 +133,7 @@ namespace Sum_Calculator_RPC_Server
                             WriteLog(msg);
                         }
                         obj.data.Clear();
-                        obj.handle.Set();
+                        obj.handle.Set(); //cho luồng khác chạy
                     }
                 }
                 catch (Exception ex)
@@ -256,53 +257,26 @@ namespace Sum_Calculator_RPC_Server
                 string address = txtIP.Text.Trim();
                 string number = txtPort.Text.Trim();
                 string username = "Server";
-                bool error = false;
-                IPAddress ip = null;
-                if (address.Length < 1)
+               
+                
+                
+                
+                
+                try
                 {
-                    error = true;
-                    WriteLog(Utils.SystemMsg("Address is required"));
-                }
-                else
-                {
-                    try
-                    {
-                        ip = Dns.Resolve(address).AddressList[0];
-                    }
-                    catch
-                    {
-                        error = true;
-                        WriteLog(Utils.SystemMsg("Address is not valid"));
-                    }
-                }
-                int port = -1;
-                if (number.Length < 1)
-                {
-                    error = true;
-                    WriteLog(Utils.SystemMsg("Port number is required"));
-                }
-                else if (!int.TryParse(number, out port))
-                {
-                    error = true;
-                    WriteLog(Utils.SystemMsg("Port number is not valid"));
-                }
-                else if (port < 0 || port > 65535)
-                {
-                    error = true;
-                    WriteLog(Utils.SystemMsg("Port number is out of range"));
-                }
-                if (username.Length < 1)
-                {
-                    error = true;
-                    WriteLog(Utils.SystemMsg("Username is required"));
-                }
-                if (!error)
-                {
+                    IPAddress ip = Helper.getIp(address);
+                    int port = Helper.ValidatePort(number);
+                    Helper.ValidateUsername(username); 
+
                     listener = new Thread(() => Listener(ip, port))
                     {
                         IsBackground = true
                     };
                     listener.Start();
+                }
+                catch(Exception ex)
+                {
+                    WriteLog(Utils.SystemMsg(ex.Message));
                 }
             }
         }
@@ -330,7 +304,7 @@ namespace Sum_Calculator_RPC_Server
             {
                 try
                 {
-                    obj.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj);
+                    obj.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj); //đưa message cho client.
                 }
                 catch (Exception ex)
                 {
@@ -357,7 +331,7 @@ namespace Sum_Calculator_RPC_Server
                 }
             }
         }
-
+     
         private void Send(string msg, Client obj)
         {
             if (send == null || send.IsCompleted)

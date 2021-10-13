@@ -21,3 +21,16 @@ D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum
 D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Client_Midleware.pdb
 D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.csproj.CopyComplete
 D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Client_Midleware.dll
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Sum_Calculator_RPC_Client.exe.config
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Sum_Calculator_RPC_Client.exe
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Sum_Calculator_RPC_Client.pdb
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Client_Midleware.dll
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\bin\Debug\Client_Midleware.pdb
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.csproj.AssemblyReference.cache
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.Form1.resources
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.Properties.Resources.resources
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.csproj.GenerateResource.cache
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.csproj.CoreCompileInputs.cache
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.csproj.CopyComplete
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.exe
+D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Client\obj\Debug\Sum_Calculator_RPC_Client.pdb
