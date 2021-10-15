@@ -31,3 +31,6 @@ D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum
 D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.csproj.CopyComplete
 D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.exe
 D:\OneDrive - DAA\Study\LearnPTIT\CacHeThongPhanTan\FinalExam\Sum_Calculator\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.pdb
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Server\bin\Debug\Server_Midleware.dll
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Server\bin\Debug\Server_Midleware.pdb
+D:\HK7\D18\HeThongPhanTan\Sum_Calculator\Sum_Calculator_RPC_Server\obj\Debug\Sum_Calculator_RPC_Server.csproj.CopyComplete

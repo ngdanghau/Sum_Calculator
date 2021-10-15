@@ -15,7 +15,7 @@ namespace Sum_Calculator_RPC_Server
     {
         private bool active = false;
         private Thread listener = null;
-        private Thread disconnect = null;
+        private int SumTotal = 0;
         
         private ConcurrentDictionary<long, Client> clients = new ConcurrentDictionary<long, Client>();
         
@@ -29,7 +29,6 @@ namespace Sum_Calculator_RPC_Server
             txtIP.Text = "127.0.0.1";
 
         }
-
         
 
         private void Active(bool status)
@@ -38,6 +37,54 @@ namespace Sum_Calculator_RPC_Server
             SetStateButton(status);
         }
 
+        // kiểm tra số và parse trả về
+        public int Validation(String input)
+        {
+            int i;
+            if (int.TryParse(input, out i) == false)
+            {
+
+                return -1;
+            }
+            else if (i < 1 || i > 10)
+            {
+
+                return -2;
+            }
+            else
+                return i;
+        }
+
+
+        private void ReadEvent(string msg, Client obj)
+        {
+            int value = Validation(msg);
+            if (value == -1)
+            {
+                WriteLog(Msg.System("Please only enter a number"));
+            }
+            else if (value == -2)
+            {
+                WriteLog(Msg.System("Please enter a number between 1 and 10"));
+            }
+            else
+            {
+                SumTotal += value;
+                string message = string.Format("{0} send: {1} ====> Sum: {2}", obj.username, obj.data, SumTotal);
+                WriteLog(message);
+            }
+        }
+
+
+        private void ErrorEvent(string msg)
+        {
+            WriteLog(Msg.Error(msg));
+        }
+
+        private void WriteStatusEvent(string msg)
+        {
+            WriteLog(Msg.System(msg));
+        }
 
 
         private void Listener(IPAddress ip, int port)
@@ -59,7 +106,7 @@ namespace Sum_Calculator_RPC_Server
                             // tạo một đối tượng Client
                             Client obj = rpc.createNewClient(listener); 
                            
-                            Thread th = new Thread(() => rpc.Connection(clients,obj))
+                            Thread th = new Thread(() => rpc.Connection(clients, obj))
                             {
                                 IsBackground = true
                             };
@@ -68,7 +115,7 @@ namespace Sum_Calculator_RPC_Server
                         }
                         catch (Exception ex)
                         {
-                            WriteLog(Utils.ErrorMsg(ex.Message));
+                            WriteLog(Msg.Error(ex.Message));
                         }
                     }
                     else
@@ -81,7 +128,7 @@ namespace Sum_Calculator_RPC_Server
             }
             catch (Exception ex)
             {
-                WriteLog(Utils.ErrorMsg(ex.Message));
+                WriteLog(Msg.Error(ex.Message));
             }
             finally
             {
@@ -102,16 +149,12 @@ namespace Sum_Calculator_RPC_Server
             {
                 string address = txtIP.Text.Trim();
                 string number = txtPort.Text.Trim();
-                string username = "Server";
-               
-                
                 
                 try
                 {
-                    rpc.inheritMethod(WriteLog); 
+                    rpc.inheritMethod(WriteStatusEvent, ReadEvent, ErrorEvent); 
                     IPAddress ip = Helper.getIp(address);
                     int port = Helper.ValidatePort(number);
-                    Helper.ValidateUsername(username); 
 
                     listener = new Thread(() => Listener(ip, port))
                     {
@@ -121,7 +164,7 @@ namespace Sum_Calculator_RPC_Server
                 }
                 catch(Exception ex)
                 {
-                    WriteLog(Utils.SystemMsg(ex.Message));
+                    WriteLog(Msg.System(ex.Message));
                 }
             }
         }
@@ -132,7 +175,7 @@ namespace Sum_Calculator_RPC_Server
 
         private void stopBtn_Click(object sender, EventArgs e)
         {
-            rpc.Disconnect(clients,disconnect);
+            rpc.Disconnect(clients);
             Active(false);
         }
 
@@ -144,14 +187,14 @@ namespace Sum_Calculator_RPC_Server
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             active = false;
-            rpc.Disconnect(clients,disconnect);
+            rpc.Disconnect(clients);
 
         }
 
         private void resetBtn_Click(object sender, EventArgs e)
         {
-            WriteLog(Utils.SystemMsg("Reset Sum = 0"));
-            rpc.resetTotal(); 
+            SumTotal = 0;
+            WriteLog(Msg.System("Reset Sum = 0"));
         }
 
         // set trạng thái Enable các nút
@@ -166,7 +209,7 @@ namespace Sum_Calculator_RPC_Server
                     txtPort.Enabled = false;
                     startBtn.Enabled = false;
                     stopBtn.Enabled = true;
-                    WriteLog(Utils.SystemMsg("Server has started"));
+                    WriteLog(Msg.System("Server has started"));
                 }
                 else
                 {
@@ -174,7 +217,7 @@ namespace Sum_Calculator_RPC_Server
                     txtPort.Enabled = true;
                     startBtn.Enabled = true;
                     stopBtn.Enabled = false;
-                    WriteLog(Utils.SystemMsg("Server has stopped"));
+                    WriteLog(Msg.System("Server has stopped"));
                 }
             });
         }
