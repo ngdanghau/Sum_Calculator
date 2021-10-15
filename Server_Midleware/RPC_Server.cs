@@ -12,17 +12,19 @@ namespace Server_Midleware
 {
 
     public delegate void ShowMessage(string msg);
+    public delegate void ReadEventDelegate(string msg, Client client);
+    public delegate void ErrorEventDelegate(string msg);
     public class RPC_Server
     {
         private Task send = null;
-
-        
+        private Thread disconnect = null;
+        private long id = 0;
 
         ShowMessage writeStatus = null;
+        ReadEventDelegate ReadAction = null;
+        ErrorEventDelegate ErrorAction = null;
 
-        public int SumTotal = 0;
-        private long id = 0; 
-
+        
         public void Write(IAsyncResult result)
         {
             Client obj = (Client)result.AsyncState;
@@ -39,25 +41,8 @@ namespace Server_Midleware
             }
         }
 
-
-        public void BeginWrite(string msg, Client obj)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(msg);
-            if (obj.client.Connected)
-            {
-                try
-                {
-                    obj.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj); //đưa message cho client.
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-            }
-        }
-
-
-        private void BeginWrite(ConcurrentDictionary<long, Client> clients,string msg, long id = -1)
+        // BeginWrite và Send dành cho việc gởi đến hết toàn bộ clients trừ cái thằng id > 0
+        private void BeginWrite(ConcurrentDictionary<long, Client> clients, string msg, long id = -1)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(msg);
             foreach (KeyValuePair<long, Client> obj in clients)
@@ -76,9 +61,40 @@ namespace Server_Midleware
             }
         }
 
+        private void Send(ConcurrentDictionary<long, Client> clients, string msg, long id = -1)
+        {
+            if (send == null || send.IsCompleted)
+            {
+                send = Task.Factory.StartNew(() => BeginWrite(clients, msg, id));
+            }
+            else
+            {
+                send.ContinueWith(antecendent => BeginWrite(clients, msg, id));
+            }
+        }
+
+
+
+
+        // dành cho việc gởi đến 1 client
+        public void BeginWrite(string msg, Client obj)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
+            if (obj.client.Connected)
+            {
+                try
+                {
+                    obj.stream.BeginWrite(buffer, 0, buffer.Length, new AsyncCallback(Write), obj); //đưa message cho client.
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+        // dành cho việc gởi đến 1 client
         public void Send(string msg, Client obj)
         {
-            msg = Utils.SystemMsg(msg); 
             if (send == null || send.IsCompleted)
             {
                 try
@@ -104,23 +120,15 @@ namespace Server_Midleware
         }
 
 
-        public void Disconnect(ConcurrentDictionary<long, Client> clients, Thread disconnect, long id = -1)
+        public void Disconnect(ConcurrentDictionary<long, Client> clients)
         {
             if (disconnect == null || !disconnect.IsAlive)
             {
                 disconnect = new Thread(() =>
                 {
-                    if (id >= 0)
+                    foreach (KeyValuePair<long, Client> obj in clients)
                     {
-                        clients.TryGetValue(id, out Client obj);
-                        obj.client.Close();
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<long, Client> obj in clients)
-                        {
-                            obj.Value.client.Close();
-                        }
+                        obj.Value.client.Close();
                     }
                 })
                 {
@@ -145,7 +153,7 @@ namespace Server_Midleware
                 }
                 catch (Exception ex)
                 {
-                    writeStatus(Utils.ErrorMsg(ex.Message));
+                    ErrorAction(ex.Message);
                 }
             }
             if (bytes > 0)
@@ -160,21 +168,7 @@ namespace Server_Midleware
                     }
                     else
                     {
-                        int value = Validation(obj.data.ToString());
-                        if (value == -1)
-                        {
-                            writeStatus(Utils.SystemMsg("Please only enter a number"));
-                        }
-                        else if (value == -2)
-                        {
-                            writeStatus(Utils.SystemMsg("Please enter a number between 1 and 10"));
-                        }
-                        else
-                        {
-                            SumTotal += value;
-                            string msg = string.Format("{0} send: {1} ====> Sum: {2}", obj.username, obj.data, SumTotal);
-                            writeStatus(msg);
-                        }
+                        ReadAction(obj.data.ToString(), obj);
                         obj.data.Clear();
                         obj.handle.Set(); //cho luồng khác chạy
                     }
@@ -182,8 +176,8 @@ namespace Server_Midleware
                 catch (Exception ex)
                 {
                     obj.data.Clear();
-                    writeStatus(Utils.ErrorMsg(ex.Message));
                     obj.handle.Set();
+                    ErrorAction(ex.Message);
                 }
             }
             else
@@ -194,31 +188,32 @@ namespace Server_Midleware
         }
 
 
-        public string openConnection(ConcurrentDictionary<long, Client> clients,Client obj)
+       
+        public string openConnection(ConcurrentDictionary<long, Client> clients, Client obj)
         {
             clients.TryAdd(obj.id, obj);
-
             string msg = string.Format("{0} has connected", obj.username);
-            
-            return msg; 
+            writeStatus(msg);
+            return msg;
         }
+
         public string closeConnection(ConcurrentDictionary<long, Client> clients, Client obj)
         {
-
             obj.client.Close();
             clients.TryRemove(obj.id, out Client tmp);
-            return tmp.username;
+            string msg = string.Format("{0} has disconnected", obj.username);
+            writeStatus(msg);
+            return msg;
         }
-
 
 
 
         // Hàm xử lý kết nối và gửi nhận packet
-        public void Connection(ConcurrentDictionary<long, Client> clients,Client obj)
+        public void Connection(ConcurrentDictionary<long, Client> clients, Client obj)
         {
             //mở kết nôi: 
             string msg = openConnection(clients, obj);
-            writeStatus(Utils.SystemMsg(msg));
+            
 
 
             // gửi lại cho client kết quả kết nối
@@ -228,7 +223,8 @@ namespace Server_Midleware
             }
             catch (Exception ex)
             {
-                writeStatus(ex.Message);
+                ErrorAction(ex.Message);
+                return;
             }
 
             // chạy trong khi vẫn kết nối
@@ -242,15 +238,13 @@ namespace Server_Midleware
                 }
                 catch (Exception ex)
                 {
-                    writeStatus(Utils.ErrorMsg(ex.Message));
+                    ErrorAction(ex.Message);
                 }
             }
 
             //đóng kết nối: 
-
-
             msg = closeConnection(clients, obj); 
-            writeStatus(Utils.SystemMsg(msg));
+            
 
             try
             {
@@ -258,28 +252,11 @@ namespace Server_Midleware
             }
             catch (Exception ex)
             {
-                writeStatus(ex.Message);
+                ErrorAction(ex.Message);
             }
         }
       
-
-        // kiểm tra số và parse trả về
-        public int Validation(String input)
-        {
-            int i;
-            if (int.TryParse(input, out i) == false)
-            {
-                
-                return -1;
-            }
-            else if (i < 1 || i > 10)
-            {
-               
-                return -2;
-            }
-            else
-                return i;
-        }
+       
         public Client createNewClient(TcpListener listener)
         {
             Client client = new Client();
@@ -293,21 +270,26 @@ namespace Server_Midleware
             id++; 
             return client; 
         }
-        public void inheritMethod(ShowMessage writeLog)
+
+        public void inheritMethod(ShowMessage writeLog, ReadEventDelegate readEvent, ErrorEventDelegate ErrorEvent)
         {
+
             if (writeStatus == null)
             {
                 writeStatus += writeLog;
             }
+
+
+            if (ReadAction == null)
+            {
+                ReadAction += readEvent;
+            }
+            
+            if (ErrorAction == null)
+            {
+                ErrorAction += ErrorEvent;
+            }
              
-        }
-        //public void destroyMethod(ShowMessage writeLog)
-        //{
-        //    writeStatus -= writeLog; 
-        //}
-        public void resetTotal()
-        {
-            this.SumTotal = 0; 
         }
     }
 }
